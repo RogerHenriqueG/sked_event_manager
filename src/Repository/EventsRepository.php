@@ -14,23 +14,30 @@ class EventsRepository
 
 	}
 
-    public function getEventsByMonth(int $year, int $month): array
+    public function getEvents(): array
     {
-        $startDate = "{$year}-{$month}-01 00:00:00";
-        $endDate = "{$year}-{$month}-" . date('t', strtotime($startDate)) . " 23:59:59";
-
-        $query = 'SELECT id, title, description, start_datetime, end_datetime, created_at, updated_at, deleted_at
+        $query = 'SELECT *
                   FROM events
                   WHERE deleted_at IS NULL
-                  AND start_datetime BETWEEN :startDate AND :endDate
                   ORDER BY start_datetime';
 
         $stmt = $this->sql->prepare($query);
-        $stmt->bindValue(':startDate', $startDate, PDO::PARAM_STR);
-        $stmt->bindValue(':endDate', $endDate, PDO::PARAM_STR);
         $stmt->execute();
 
-        return $stmt->fetchAll();
+        return $stmt->fetchAll($this->sql::FETCH_ASSOC);
+    }
+    
+    public function view(int $id): array
+    {
+        $query = 'SELECT *
+                  FROM events
+                  WHERE id = :id';
+
+        $stmt = $this->sql->prepare($query);
+        $stmt->bindValue(':id', $id, PDO::PARAM_STR);
+        $stmt->execute();
+
+        return $stmt->fetch($this->sql::FETCH_ASSOC);
     }
 
     public function createEvent(array $eventData): ?int

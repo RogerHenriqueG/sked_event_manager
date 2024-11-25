@@ -75,7 +75,7 @@ class User
 
 			return self::respondWithJson($response, [
 				'cod' => 1,
-				'message' => '/dispatcher'
+				'message' => '/home'
 			], 200, 'Encaminhar usuário para dispatcher!');
 
 		} catch (PDOException $e) {
