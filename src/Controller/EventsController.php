@@ -24,17 +24,20 @@ class EventsController
 
     public function list(ServerRequestInterface $request, ResponseInterface $response): ResponseInterface
     {
-        $year = $request->getQueryParams()['year'] ?? date('Y');
-        $month = $request->getQueryParams()['month'] ?? date('m');
 
-        if (!checkdate($month, 1, $year)) {
-            return $this->respondWithJson($response, [
-                'status' => 'error',
-                'message' => 'Ano ou mês inválido.'
-            ], 400);
-        }
+        $events = $this->repository->getEvents();
 
-        $events = $this->repository->getEventsByMonth($year, $month);
+        return $this->respondWithJson($response, [
+            'status' => 'success',
+            'data' => $events
+        ], 200);
+    }
+    
+    public function view(ServerRequestInterface $request, ResponseInterface $response): ResponseInterface
+    {
+        $eventId = (int) $request->getAttribute('id');
+
+        $events = $this->repository->view($eventId);
 
         return $this->respondWithJson($response, [
             'status' => 'success',
